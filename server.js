@@ -23,14 +23,14 @@ app.use('/', express.static(path.join(__dirname, './webclient/')));
 
 
 //Mongoose
-var db = 'mongodb://localhost/jojo';
-mongoose.connect(db);
-
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-    console.log("connnected with mongo");
-});
+// var db = 'mongodb://localhost/jojo';
+// mongoose.connect(db);
+// 
+// var db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', function() {
+//     console.log("connnected with mongo");
+// });
 
 
 
