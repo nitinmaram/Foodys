@@ -1,9 +1,8 @@
 import React from 'react'
 import {Button} from 'semantic-ui-react'
 import { Card, Icon, Image, Input, Container} from 'semantic-ui-react'
-const ReactToastr = require('react-toastr');
-const {ToastContainer} = ReactToastr;
-const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
+import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 class Child3 extends React.Component {
     constructor() {
 
@@ -13,9 +12,9 @@ class Child3 extends React.Component {
       }
   sendData(){
     if(document.cookie==''){
-      this.refs.container.error('Please Sign Up/Log In', '', {
-        timeOut: 1000,
-        extendedTimeOut: 10000
+      toast.error("Please Sign Up/Log In !", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000
       });
     }
     else{
@@ -30,7 +29,6 @@ class Child3 extends React.Component {
      distance : this.props.distance,
      user: document.cookie
    }
-   console.log(JSON.stringify(resdata,undefined,2));
    $.ajax({
      url : "/restaurants/add",
      type : 'POST',
@@ -132,7 +130,7 @@ update1() {
     {but}
     </div>
   </Card.Content>
-  <ToastContainer ref='container' toastMessageFactory={ToastMessageFactory} className='toast-top-center'/>
+  <ToastContainer closeButton={false} hideProgressBar transition={Zoom}/>
   </Card>
         )
       }

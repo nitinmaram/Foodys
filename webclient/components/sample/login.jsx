@@ -1,8 +1,7 @@
 let React = require('react');
 import { Button, Form, Header, Grid, Icon, Container, Image} from 'semantic-ui-react';
-const ReactToastr = require('react-toastr');
-const {ToastContainer} = ReactToastr;
-const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
+import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 let {browserHistory} = require('react-router');
 
 class Login extends React.Component {
@@ -51,30 +50,31 @@ handleConfirmPassword(e)
     })
 }
 loginAlert() {
-  this.refs.container.error('Invalid User Name/ Password', '', {
-    timeOut: 1000,
-    extendedTimeOut: 10000
-  });
+  toast.error("Invalid User ID or Password !", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000,
+      transition: Flip
+    });
 }
 registerAlert() {
   if(this.state.password != this.state.confirmPassword){
-    this.refs.container.error('Password Mismatch', '', {
-      timeOut: 1000,
-      extendedTimeOut: 10000
+    toast.error("Password Mismatch !", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000
     });
   }
   else{
-  this.refs.container.error('Provide valid details', '', {
-    timeOut: 1000,
-    extendedTimeOut: 10000
-  });
+    toast.error("Enter Valid Details !", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000
+      });
 }
 }
 registerSuccessAlert() {
-  this.refs.container.success('Successfully Registered', '', {
-    timeOut: 3000,
-    extendedTimeOut: 1000
-  });
+  toast.success("Success Notification !", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000
+    });
 }
 withoutSignUp(){
   document.cookie=this.state.username
@@ -168,6 +168,7 @@ formControl=(   <Form>
  return(
    <div>
  <Container>
+ <ToastContainer closeButton={false} hideProgressBar/>
  <Grid centered columns={2}>
   <Grid.Column>
   <Image src = {require('./FoodiesLogo.png')}/>
@@ -179,7 +180,6 @@ formControl=(   <Form>
    <h5 onClick={this.withoutSignUp.bind(this)} style={{cursor:'pointer', color:'orange'}}>Continue without signup ?</h5>
    </Grid.Column>
  </Grid>
- <ToastContainer ref='container' toastMessageFactory={ToastMessageFactory} className='toast-top-center'/>
  </Container>
 </div>
 );

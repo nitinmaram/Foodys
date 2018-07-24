@@ -12,20 +12,26 @@ router.post('/add', function(req, res) {
      password : req.body.password,
      name: req.body.name
    });
-
+   console.log(req);
+   console.log(req.session);
    newUser.save().then((doc)=>{
-     console.log('Insertion success',doc);
+     req.session.regenerate((err) => {
+     if(err) {
+       return reject(err);
+     }
+     req.session.userInfo = newUser;
+     req.session.save()
      res.send('insertion success');
    },(err)=>{
      console.log(err);
      res.send(err,'not saved');
    });
 });
+});
 
 
 // Get details of all user in the system
 router.get('/', function(req, res) {
- console.log('Inside get');
   User.find({"_id" : "58a1aeee09f583558948c175"}).then((docs) => {
        res.send({
            docs
@@ -36,12 +42,21 @@ router.get('/', function(req, res) {
  });
 
 router.post('/login', function(req, res) {
-    console.log(req.body.username);
     User.findOne({"username" : req.body.username}, function(err, docs){
-      if(docs==null || err)
+      if(docs==null || err){
       res.send({responseText:'not authenticated'});
-      else
-      res.send({responseText:'authenticated'});
+      	}
+      else{
+        req.session.regenerate((err) => {
+        if(err) {
+          return reject(err);
+        }
+          req.session.userInfo = docs;
+          req.session.save()
+          res.send({responseText:'authenticated'});
+        });
+
+      }
     });
 });
 

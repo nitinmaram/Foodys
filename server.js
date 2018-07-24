@@ -6,8 +6,8 @@ var mongoose = require('mongoose');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var config = require('./webpack.config');
-var restaurants = require('./webserver/routes/restaurants');
-var users = require('./webserver/routes/users');
+var restaurants = require('./webserver/routes/restaurants/index');
+var users = require('./webserver/routes/users/index');
 var app = express();
 var compiler = webpack(config);
 var fs = require('fs');
@@ -16,23 +16,30 @@ var options = {
   key: fs.readFileSync('key.pem', 'utf8'),
   cert: fs.readFileSync('server.crt', 'utf8'),
 };
-
+session = require('express-session');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', express.static(path.join(__dirname, './webclient/')));
 
 
-//Mongoose
-// var db = 'mongodb://localhost/jojo';
-// mongoose.connect(db);
-// 
-// var db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', function() {
-//     console.log("connnected with mongo");
-// });
+// Mongoose
+var db = 'mongodb://localhost/jojo';
+mongoose.connect(db);
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    console.log("connnected with mongo");
+});
 
 
+//session
+app.use(session({
+	secret: '...',
+	resave: false,
+	saveUninitialized: false,
+	maxAge: 1000 * 60 * 60		// 1 hour
+}));
 
 //Ruotes
 app.use('/users',users);
