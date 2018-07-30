@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node ./node_modules/webpack/bin/webpack.js",
-    "serv": "node server.js",
-    "lint": "gulp lint"
+    "serv": "nodemon server.js",
+    "lint": "gulp lint",
+    "start": "nodemon server.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
