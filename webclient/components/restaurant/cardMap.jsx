@@ -1,24 +1,17 @@
  import React from 'react';
-// import ReactDOM from 'react-dom';
-import {Button} from 'semantic-ui-react';
 import {Grid} from 'semantic-ui-react';
-// import {Container, Header} from 'semantic-ui-react'
-// import {Input} from 'semantic-ui-react'
-// import {Divider} from 'semantic-ui-react'
-// import {Card} from 'semantic-ui-react'
 var geolib = require('geolib');
-import Cards from './child3.jsx'
+import Cards from './restaurantCard.jsx'
 
 class DisplayComponent extends React.Component {
     constructor() {
         super();
-
       }
       render()
       {
         let lat=this.props.lat
         let lon=this.props.lon
-        let jsarray=this.props.name.map(function(objs){
+        let jsarray=this.props.restaurantsArrProp.map(function(objs){
           var loc = {latitude: objs.restaurant.location.latitude, longitude: objs.restaurant.location.longitude}
           return (
             // <Grid.Column>

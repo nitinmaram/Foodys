@@ -1,12 +1,10 @@
 import React from 'react';
-// import ReactDOM from 'react-dom';
 import {Button} from 'semantic-ui-react'
 import {Container} from 'semantic-ui-react'
-// import {Header} from 'semantic-ui-react'
 import {Input} from 'semantic-ui-react'
 import {Divider} from 'semantic-ui-react'
 
-class Child1Component extends React.Component {
+class searchTab extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -22,9 +20,8 @@ class Child1Component extends React.Component {
     {
         this.setState({cusine: e.target.value});
     }
-    f() {
-        console.log(document.cookie);
-        this.props.handle(this.state.rcity, this.state.cusine);
+    searchRestaurants() {
+        this.props.getResturantFromQueryProp(this.state.rcity, this.state.cusine);
     }
     render() {
         return (
@@ -33,16 +30,16 @@ class Child1Component extends React.Component {
                 onChange={this.changecity.bind(this)}/>
                 <Input focus placeholder='Search Cusines...' ref="cusine"
                 onChange={this.changecusine.bind(this)}/>
-                <Button primary onClick={this.f.bind(this)}>Search</Button>
-                <Button primary onClick={this.props.f1.bind(this)}>Near By Restaurants</Button>
+                <Button primary onClick={this.searchRestaurants.bind(this)}>Search</Button>
+                <Button primary onClick={this.props.getCurrentCoordinates.bind(this)}>Near By Restaurants</Button>
                 <Divider/>
             </Container>
         );
     }
 }
-// export default Child1Component;
-Child1Component.propTypes = {
+// export default searchTab;
+searchTab.propTypes = {
  handle: React.PropTypes.func,
  name: React.PropTypes.object
 }
-export default Child1Component;
+export default searchTab;

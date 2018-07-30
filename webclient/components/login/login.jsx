@@ -2,7 +2,8 @@ let React = require('react');
 import { Button, Form, Header, Grid, Icon, Container, Image} from 'semantic-ui-react';
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-let {browserHistory} = require('react-router');
+let {hashHistory} = require('react-router');
+import dbcalls from '../../interactors/internal/dbcalls.js'
 
 class Login extends React.Component {
   constructor() {
@@ -49,6 +50,13 @@ handleConfirmPassword(e)
       }
     })
 }
+ajaxErrorAlert() {
+  toast.error("Server down please try after some time !", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000,
+      transition: Flip
+    });
+}
 loginAlert() {
   toast.error("Invalid User ID or Password !", {
       position: toast.POSITION.TOP_CENTER,
@@ -71,41 +79,38 @@ registerAlert() {
 }
 }
 registerSuccessAlert() {
-  toast.success("Success Notification !", {
+  toast.success("Successfully Registered !", {
       position: toast.POSITION.TOP_CENTER,
-      autoClose: 2000
+      autoClose: 2000,
+      onClose: () => hashHistory.push('/home')
     });
 }
 withoutSignUp(){
-  document.cookie=this.state.username
-  browserHistory.push('/home');
+  // document.cookie='username = '+this.state.username
+  hashHistory.push('/home');
 }
 LoginUser(){
   let context = this
-$.ajax({
- url:"/users/login",
- type: 'POST',
- datatype: 'JSON',
- data:{
-   'username':this.state.username,
-   'password':this.state.password
- },
- success: function(res){
 
-   console.log(res.responseText);
-   if(res.responseText == "authenticated"){
-   browserHistory.push('/home');
-   document.cookie = context.state.username
- }
-   else
-   context.loginAlert();
- },
- error: function(err){
-  alert("Invalid username or password");
-   browserHistory.push('/');
-   console.log(err.responseText);
- }
-});
+  var stateData = {
+    'username':this.state.username,
+    'password':this.state.password
+  }
+  var successFunction = function(res) {
+    if(res.responseText == "authenticated"){
+    hashHistory.push('/home');
+    document.cookie = 'username = '+context.state.username
+    }
+    else
+    context.loginAlert();
+  }
+
+  var errorFunction = function(err){
+        console.log(err);
+        ajaxErrorAlert.bind(this)
+    }
+
+  dbcalls.loginUser(stateData, successFunction.bind(this), errorFunction.bind(this))
 }
 registerUser(){
   this.setState({heading: 'Register', reg: true, log: true});
@@ -113,33 +118,30 @@ registerUser(){
   {
     let context = this
     if(this.state.username !='' && this.state.password != '' && this.state.password == this.state.confirmPassword){
-$.ajax({
- url:"/users/add",
- type: 'POST',
- datatype: 'JSON',
- data:{
-   'username':this.state.username,
-   'password':this.state.password,
-   'name': this.state.name
- },
- success: function(res){
-   context.setState({heading: '', reg: false, log: false
- });
- document.cookie = context.state.username
-  context.registerSuccessAlert();
-    setTimeout(function() {
-     browserHistory.push('/home'); }.bind(this), 2000);
- },
- error: function(err){
-   this.setState({heading: '', reg: false, log: false});
-   context.registerAlert();
-   console.log(err.responseText);
- }
-});
-}
-else{
-  context.registerAlert();
-}
+      var stateData = {
+        'username':this.state.username,
+        'password':this.state.password,
+        'name': this.state.name
+      }
+      var successFunction = function(res){
+        context.setState({heading: '', reg: false, log: false
+      });
+      document.cookie = 'username = '+context.state.username
+       context.registerSuccessAlert();
+      }
+      var errorFunction = function(err){
+        this.setState({heading: '', reg: false, log: false});
+        context.registerAlert();
+        console.log(err.responseText);
+      }
+
+      dbcalls.addUser(stateData, successFunction.bind(this),errorFunction.bind(this))
+
+    }
+      else
+      {
+        context.registerAlert();
+      }
 }
 
 }

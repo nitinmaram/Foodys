@@ -1,28 +1,32 @@
 import React, {Component} from 'react'
 import {Input, Menu, Segment, Button, Header, Icon} from 'semantic-ui-react'
-let {browserHistory, Link} = require('react-router');
+let {hashHistory, Link} = require('react-router');
+import dbcalls from '../../interactors/internal/dbcalls.js'
+
 class MenuExamplePointing extends Component {
-   state = {
-       activeItem: 'home'
-   }
+
+  constructor(props){
+    super(props);
+    console.log(this.props.activeItem);
+    this.state = {
+      activeItem: this.props.activeItem || 'home'
+    }
+  }
 
    handleItemClick = (e, {name}) => this.setState({activeItem: name})
    logOut(){
-
-    $.ajax({
-        url: '/users/logout',
-        type: 'GET',
-        success: function(data) {
-          if (typeof data.redirect == 'string')
-           window.location.replace(window.location.protocol + "//" + window.location.host + data.redirect);
-        }.bind(this),
-        error: function(err) {
+        var successFunction = function() {
+          console.log('cookies');
+          document.cookie = "username = ; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+          setTimeout(() => {hashHistory.push('/')}, 1000)
+        }.bind(this)
+        var errorFunction = function(err) {
             console.log('error in logout'+err);
         }.bind(this)
-    });
+        dbcalls.logoutUser(successFunction,errorFunction)
   }
   reDirect(){
-    browserHistory.push('/')
+    hashHistory.push('/')
   }
    render() {
        const {activeItem} = this.state

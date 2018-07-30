@@ -1,8 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Card, Icon, Image, Button, Container } from 'semantic-ui-react';
-import MyCard from './restaurant/child3.jsx';
-let {browserHistory} = require('react-router');
+import { Card, Icon, Image, Button, Container, Divider } from 'semantic-ui-react';
+import MyCard from './restaurantCard.jsx';
+import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import dbcalls from '../../interactors/internal/dbcalls.js';
+var NavBar = require('../navbar/NavBar.jsx');
+
+let {hashHistory} = require('react-router');
 
 class MyFavourites extends React.Component{
   constructor() {
@@ -10,7 +15,6 @@ class MyFavourites extends React.Component{
     this.state = {
       objArray : []
     };
-   // this.change = this.change.bind(this);
     this.getFavourites = this.getFavourites.bind(this);
     this.removeFavCard = this.removeFavCard.bind(this);
     this.updateComments = this.updateComments.bind(this);
@@ -20,43 +24,40 @@ class MyFavourites extends React.Component{
     console.log(this.props.location.pathname);
     if(document.cookie=='')
     {
-      this.refs.container.error('Please Sign Up/Log In', '', {
-        timeOut: 1000,
-        extendedTimeOut: 10000
-      });
-      setTimeout(function() {
-       browserHistory.push('/home'); }.bind(this), 1000);
+      toast.error("Please Sign Up/Log In !", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 2000,
+          transition: Flip,
+           onClose: () => hashHistory.push('/home')
+        });
     }
     else{
-    $.ajax({
-			   url:"/restaurants/",
-			 type:'POST',
-       data: {user: document.cookie},
-			 beforeSend: function (request)
-									 {
-											 request.setRequestHeader("user-key", "46a2eab73fc526624bab1d5a65c8001a");
-									 },
-			success: function(data)
+       var stateData =  {user: document.cookie}
+			var successFunction = function(data)
 			{
         if(data.length==0)
         {
-          this.refs.container.error('No Favourites, Please add Restaurants', '', {
-            timeOut: 2000,
-            extendedTimeOut: 10000
-          });
-          setTimeout(function() {
-           browserHistory.push('/home'); }.bind(this), 2000);
-        }
-        this.setState({
+          toast.error("No Favourites, Please add Restaurants !", {
+              position: toast.POSITION.TOP_CENTER,
+              autoClose: 2000,
+              transition: Flip,
+              onClose: () => hashHistory.push('/home')
+            });
+         }
+         else
+        {
+          this.setState({
           objArray: data
         });
-			}.bind(this),
-			error: function(err)
+      }
+			}
+			var errorFunction = function(err)
 			{
 				console.log('error occurred on AJAX');
 				console.log(err);
-			}.bind(this)
-		});
+			}
+      dbcalls.getFavourite(stateData, successFunction.bind(this), errorFunction.bind(this))
+
   }
   }
 
@@ -88,14 +89,10 @@ class MyFavourites extends React.Component{
   componentDidMount() {
     this.getFavourites();
   }
-  //  change(){
-  //   this.getFavourites();
-  // }
   render () {
     let values = this.state.objArray;
     let methodRef = this.removeFavCard;
     let updateRef = this.updateComments;
- 	// let chan=this.change.bind(this);
 		let cards = values.map(function(item) {
 				return (
 			<div>
@@ -109,11 +106,17 @@ class MyFavourites extends React.Component{
 		});
 
 		return (
-			<div style={{marginLeft: '50px'}}>
-			<Card.Group itemsPerRow={2}>
+      <div>
+      <NavBar activeItem = 'favourites'/>
+      <br/>
+      <Container>
+      <Divider/>
+       <ToastContainer closeButton={false} hideProgressBar/>
+			<Card.Group>
 				{cards}
 			</Card.Group>
-		</div>
+    </Container>
+    </div>
 		);
 	}
 

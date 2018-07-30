@@ -3,9 +3,10 @@ import {Button} from 'semantic-ui-react'
 import { Card, Icon, Image, Input, Container} from 'semantic-ui-react'
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-class Child3 extends React.Component {
-    constructor() {
+import dbcalls from '../../interactors/internal/dbcalls.js'
 
+class RestaurantCard extends React.Component {
+    constructor() {
         super();
         this.sendData = this.sendData.bind(this);
         this.state={addButton:'Add',updateButton:'Update'}
@@ -18,7 +19,7 @@ class Child3 extends React.Component {
       });
     }
     else{
-   let resdata = {
+   var stateData = {
       _id : this.props.id,
      imageurl : this.props.image,
      resName : this.props.name,
@@ -29,60 +30,44 @@ class Child3 extends React.Component {
      distance : this.props.distance,
      user: document.cookie
    }
-   $.ajax({
-     url : "/restaurants/add",
-     type : 'POST',
-     data : resdata,
-     success: function(data) {
+     var successFunction = function(data) {
       this.setState({'addButton':'Added to your Fav'})
          console.log(data);
-       }.bind(this),
-     error: function(xhr, status, err) {
+       }.bind(this)
+     var errorFunction = function(xhr, status, err) {
          console.error(this.props.url, status, err.toString());
        }.bind(this)
-   });
+       dbcalls.addFavourites(stateData, successFunction, errorFunction)
  }
 }
    deleteData(){
-    // f = this.props.remove;
-   console.log(this.props.location);
-   $.ajax({
-     url : "/restaurants/delete",
-     type : 'DELETE',
-     data :  {resId : this.props.id},
-     success: function(data) {
+     var stateData =  {resId : this.props.id}
+     var successFunction = function(data) {
       this.props.remove(this.props.id);
-        // f(this.props.id);
          console.log(data);
-       }.bind(this),
-     error: function(xhr, status, err) {
+       }.bind(this)
+     var errorFunction = function(xhr, status, err) {
          console.error(this.props.url, status, err.toString());
        }.bind(this)
-   });
+       dbcalls.deleteFavourite(stateData, successFunction, errorFunction)
  }
-updateComments(evt){
+commentsChange(evt){
    this.setState({comments : evt.target.value});
-   this.update1();
-   console.log(this.state.comments);
  }
-update1() {
-  // let f = this.props.func;
-   $.ajax({
-     url:'/restaurants/update/'+this.props.id,
-     type: 'patch',
-     data:{"comments": this.state.comments},
-     success: function(data){
-      // f();
+updateComments() {
+     var stateData = {
+       'id': this.props.id,
+       'comments': this.state.comments
+     }
+     var successFunction = function(data){
       this.props.update(this.props.id,this.state.comments);
-      this.setState({'updateButton':'Updated'})
-       console.log(this.props.id);
-       console.log('Successfully updated' + data);
-     }.bind(this),
-     error: function(err){
+      // this.setState({'updateButton':'Updated'})
+     }.bind(this)
+     var errorFunction = function(err){
        console.log('error occurred on AJAX');
        console.log(err);
      }
-   });
+   dbcalls.updateComments(stateData, successFunction, errorFunction)
  }
       render()
       {
@@ -92,13 +77,13 @@ update1() {
         if(this.props.fav === "fav") {
           but = (
             <div>
-            <Input placeholder={this.props.comment} fluid onChange={this.updateComments.bind(this)}
-            />
+            <Input placeholder= 'Comments' fluid onChange={this.commentsChange.bind(this)}
+            /><br/>
             <Button primary onClick={this.deleteData.bind(this)}>Delete</Button>
-            <Button primary onClick={this.update1.bind(this)}>{this.state.updateButton}</Button>
+            <Button primary onClick={this.updateComments.bind(this)}>{this.state.updateButton}</Button>
              </div>
             );
-          comm=(<div><Card.Description className="com">comment:{this.props.comment}</Card.Description></div>);
+          comm=(<div><Card.Description className="com"><h5>comments : {this.props.comment}</h5></Card.Description></div>);
 
         }
         else {
@@ -107,14 +92,15 @@ update1() {
             );
         }
         return(
-  <Card>
+  <Card style = {{height: 'auto'}}>
   <Image src={this.props.image} alt="Image not available" className="cardimage"/>
   <Card.Content>
     <Card.Header className="head">{this.props.name}</Card.Header>
     <Card.Meta className="cus">{this.props.cuisines}</Card.Meta>
     <Card.Description className="desc">{this.props.location}</Card.Description>
     {comm}
-    <h5 style={{marginTop:'-5px'}}>{this.props.distance} m away</h5>
+    <br/>
+    <h3 style={{marginTop:'-5px'}}>{this.props.distance} m away</h3>
     <a href={'https://www.google.com/maps/dir/'+this.props.lat+','+this.props.lon+'/'+this.props.lat1+','+this.props.lon1}
     target="_blank">
     <Icon name='location arrow'/>
@@ -135,9 +121,8 @@ update1() {
         )
       }
     }
-    Child3.propTypes = {
+    RestaurantCard.propTypes = {
       id: React.PropTypes.object,
       name: React.PropTypes.object,
-
 }
-    module.exports=Child3;
+module.exports=RestaurantCard;

@@ -1,6 +1,6 @@
-import Child1 from './child1.jsx';
-import Child2 from './child2.jsx';
+import searchTab from './searchTab.jsx';
+import cardMap from './cardMap.jsx';
 module.exports = {
-  Child1,
-  Child2
+  searchTab,
+  cardMap
 };
