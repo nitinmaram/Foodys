@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Restaurant from './restaurant/';
+import SearchTab from './restaurant/searchTab.jsx';
+import CardMap from './restaurant/cardMap.jsx';
 import zomatoCalls from '../interactors/services/zomatoCalls.js'
 var NavBar = require('./navbar/NavBar.jsx');
 
@@ -10,7 +11,9 @@ class MainComponent extends React.Component {
         this.state = {
             jsonarray: [],
             lat: 0,
-            lon: 0
+            lon: 0,
+            city: '',
+            cityId: 0
         };
       }
       componentDidMount(){
@@ -26,13 +29,17 @@ class MainComponent extends React.Component {
         navigator.geolocation.getCurrentPosition(this.success.bind(this),this.options.bind(this));
       }
 
-      getResturantFromQuery(rcity,cusine)
+      getResturantFromQuery(rcity,cusine,cityId)
       {
               var stateData = {
                 'rcity': rcity,
-                'cuisine': cuisine
+                'cuisine': cusine,
+                'cityId':this.state.cityId,
+                'lat': this.state.lat,
+                'lon': this.state.lon
               }
               var successFunction = function(data) {
+                console.log(data.restaurants[0].restaurant.location,"data");
                 this.setState({jsonarray: data.restaurants});
               }.bind(this)
               var errorFunction = function(err) {
@@ -53,7 +60,9 @@ class MainComponent extends React.Component {
                 'lon': lon
               }
               var successFunction = function(data) {
-                this.setState({jsonarray: data.restaurants});
+                console.log(data.restaurants[0].restaurant.location,"data");
+                this.setState({jsonarray: data.restaurants, city: data.restaurants[1].restaurant.location.city,
+                   cityId: data.restaurants[1].restaurant.location.city_id});
               }.bind(this)
               var errorFunction = function(err) {
                   console.log('error occurred on AJAX');
@@ -62,14 +71,33 @@ class MainComponent extends React.Component {
               zomatoCalls.getResturantByLoc(stateData, successFunction, errorFunction)
       }
 
+      getResturantByDropLoc(cityId)
+      {
+              var stateData = {
+                cityId: cityId
+              }
+              var successFunction = function(data) {
+                console.log(data,'data');
+                this.setState({jsonarray: data.restaurants, city: data.restaurants[1].restaurant.location.city,
+                   cityId: data.restaurants[1].restaurant.location.city_id});
+              }.bind(this)
+              var errorFunction = function(err) {
+                  console.log('error occurred on AJAX');
+                  console.log(err);
+              }.bind(this)
+              zomatoCalls.getResturantByDropLoc(stateData, successFunction, errorFunction)
+      }
+
     render()
     {
         return (
             <div>
-                <NavBar activeItem = 'home'/>
+                <NavBar activeItem = 'home' city = {this.state.city}/>
                 <br/>
-                <Restaurant.searchTab getResturantFromQueryProp={this.getResturantFromQuery.bind(this)} getCurrentCoordinates={this.getCurrentCoordinates.bind(this)}/>
-                <Restaurant.cardMap restaurantsArrProp={this.state.jsonarray} lat={this.state.lat} lon={this.state.lon}/>
+                <SearchTab city = {this.state.city} getResturantByDropLocProp = {this.getResturantByDropLoc.bind(this)}
+                getResturantFromQueryProp={this.getResturantFromQuery.bind(this)}
+                getCurrentCoordinates={this.getCurrentCoordinates.bind(this)}/>
+                <CardMap restaurantsArrProp={this.state.jsonarray} lat={this.state.lat} lon={this.state.lon}/>
             </div>
 
         );

@@ -4,7 +4,7 @@ import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify
 import 'react-toastify/dist/ReactToastify.css';
 let {hashHistory} = require('react-router');
 import dbcalls from '../../interactors/internal/dbcalls.js'
-
+import logo from './FoodiesLogo.jpg'
 class Login extends React.Component {
   constructor() {
       super();
@@ -173,7 +173,7 @@ formControl=(   <Form>
  <ToastContainer closeButton={false} hideProgressBar/>
  <Grid centered columns={2}>
   <Grid.Column>
-  <Image src = {require('./FoodiesLogo.png')}/>
+  <Image src = {logo} alt={"logo"}/>
   <br/>
     {formControl}
     <br/>

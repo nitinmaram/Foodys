@@ -1,44 +1,45 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const path = require('path');
 
-module.exports = {
- devtool: 'cheap-module-eval-source-map',
- entry: {
-   app: [
-   'webpack/hot/dev-server',
-   'webpack-hot-middleware/client?reload=true',
-    path.join(__dirname, "webclient", "clientapp.jsx")]
- },
- output: {
-   path: path.join(__dirname, "webclient", "dist"),
-   publicPath: "/dist/",
-   filename: "bundle.js"
- },
- module: {
-     loaders: [
-              {
-               test: /\.(jsx)$/,
-               loaders: [
-                            'babel?presets[]=react,presets[]=es2015,presets[]=stage-0'
-                         ]
-              },
-              {
-                test: /\.css$/,
-                loader:"style-loader!css-loader"
-              },
-              {
-                test: /\.(jpe?g|png|gif|svg)$/i,
-                loaders: ['file-loader']
-              }
-            ]
- },
- watch:true,
- resolve: {
-   extensions: ['', '.js', '.jsx', '/index.js', '/index.jsx']
- },
- plugins: [new webpack.optimize.OccurenceOrderPlugin(),
-       new webpack.HotModuleReplacementPlugin(),
-       new webpack.NoErrorsPlugin(),
-       new HtmlWebpackPlugin({ template: path.resolve('./webclient/index.html') })]
-};
+const config = {
+	entry: [
+		'webpack/hot/dev-server',
+		'webpack-hot-middleware/client?http://localhost:3000/',
+		path.join(__dirname, "webclient", "clientapp.jsx")
+	],
+	output: {
+		path: path.resolve(__dirname, 'webclient', 'dist'),
+		filename: 'bundle.js',
+		publicPath: '/dist/'
+	},
+	plugins: [
+		new webpack.HotModuleReplacementPlugin()
+	],
+	node: {
+      	child_process: 'empty',
+      	fs: "empty",
+      	net: "empty",
+      	tls: "empty"
+    },
+  devtool: 'source-map',
+	module: {
+		loaders: [
+			{
+				test: /\.(jsx|js)$/,
+				loader: ['react-hot-loader', 'babel-loader'],
+
+				exclude: [/node_modules/]
+			},
+			{
+			  test: /\.css$/,
+			  loader: 'style-loader!css-loader'
+			},
+			{
+			 test: /\.(jpe?g|gif|png)$/,
+			 loader: 'file-loader?emitFile=false&name=../assets/images/[name].[ext]'
+			}
+		]
+	}
+}
+
+module.exports = config;
