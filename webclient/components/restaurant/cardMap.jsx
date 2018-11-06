@@ -4,8 +4,8 @@ var geolib = require('geolib');
 import Cards from './restaurantCard.jsx'
 
 class DisplayComponent extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
       }
       render()
       {
@@ -20,8 +20,10 @@ class DisplayComponent extends React.Component {
             name={objs.restaurant.name}
             image={objs.restaurant.featured_image}
             location={objs.restaurant.location.address}
+            cost = {objs.restaurant.average_cost_for_two}
             cuisines={objs.restaurant.cuisines}
             ratings={objs.restaurant.user_rating.aggregate_rating}
+            votes = {objs.restaurant.user_rating.votes}
             comment=""
             distance={geolib.getDistance({latitude: lat,longitude: lon},loc)}
             lat={lat}

@@ -60,7 +60,7 @@ class MainComponent extends React.Component {
                 'lon': lon
               }
               var successFunction = function(data) {
-                console.log(data.restaurants[0].restaurant.location,"data");
+                console.log(data,"data");
                 this.setState({jsonarray: data.restaurants, city: data.restaurants[1].restaurant.location.city,
                    cityId: data.restaurants[1].restaurant.location.city_id});
               }.bind(this)
@@ -87,6 +87,30 @@ class MainComponent extends React.Component {
               }.bind(this)
               zomatoCalls.getResturantByDropLoc(stateData, successFunction, errorFunction)
       }
+      sortHandler(value){
+        if(value == 'Ratings'){
+          this.setState({
+          jsonarray: this.state.jsonarray.sort((a,b) => {
+              return(
+             b.restaurant.user_rating.aggregate_rating - a.restaurant.user_rating.aggregate_rating
+           )
+         })
+        })
+        }
+        else if(value == 'Distance'){
+          this.getCurrentCoordinates();
+        }
+        else
+        {
+          this.setState({
+          jsonarray: this.state.jsonarray.sort((a,b) => {
+              return(
+             a.restaurant.average_cost_for_two - b.restaurant.average_cost_for_two
+           )
+         })
+        })
+      }
+      }
 
     render()
     {
@@ -96,7 +120,7 @@ class MainComponent extends React.Component {
                 <br/>
                 <SearchTab city = {this.state.city} getResturantByDropLocProp = {this.getResturantByDropLoc.bind(this)}
                 getResturantFromQueryProp={this.getResturantFromQuery.bind(this)}
-                getCurrentCoordinates={this.getCurrentCoordinates.bind(this)}/>
+                getCurrentCoordinates={this.getCurrentCoordinates.bind(this)} sortHandlerProp = {this.sortHandler.bind(this)}/>
                 <CardMap restaurantsArrProp={this.state.jsonarray} lat={this.state.lat} lon={this.state.lon}/>
             </div>
 

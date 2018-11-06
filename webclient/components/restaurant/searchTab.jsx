@@ -11,10 +11,20 @@ class searchTab extends React.Component {
             rcity: "",
             dropOptions: [{key: '', value: '', text: ''}],
             cityValue: props.city,
-            cityId: 0
+            cityId: 0,
+            sortValue: 'Distance',
+            sortFlag: false,
+            curCity: ''
         }
     }
+
     componentWillReceiveProps(newProps){
+      if(!this.state.sortFlag && newProps.city != ""){
+        this.setState({
+          curCity: newProps.city,
+          sortFlag: true
+        })
+      }
       this.setState({
         cityValue: newProps.city
       })
@@ -57,6 +67,7 @@ class searchTab extends React.Component {
 
     }
     dropChange(e,{value}){
+
       this.setState({
         cityValue: value
       })
@@ -75,14 +86,32 @@ class searchTab extends React.Component {
       zomatoCalls.getCitiesByQuery(stateData, successFunction, errorFunction)
 
     }
+    sortChange(e,{value}){
+      this.setState({
+        sortValue: value
+      })
+      this.props.sortHandlerProp.call(this,value)
+    }
     render() {
+      console.log(this.state.curCity, "curCity");
+      console.log(this.state.cityValue, "cityValue");
+      let sortOptions = this.state.curCity == this.state.cityValue ?  [{'key':'Distance', 'value': 'Distance', 'text': 'Distance'},
+      {'key':'Cost', 'value': 'Cost', 'text': 'Cost'},
+      {'key':'Ratings', 'value': 'Ratings', 'text': 'Ratings'}]:
+
+                          [{'key':'Cost', 'value': 'Cost', 'text': 'Cost'},
+                          {'key':'Ratings', 'value': 'Ratings', 'text': 'Ratings'}]
         return (
             <Container textAlign="center">
                 <h3>You Are in &nbsp;&nbsp;&nbsp;
                 <Dropdown placeholder='Select Country' search scrolling
                  selection options={this.state.dropOptions}
                  text = {this.state.cityValue} onChange = {this.dropChange.bind(this)}
-                 onSearchChange = {this.searchChange.bind(this)} value = {this.state.cityValue}/></h3>
+                 onSearchChange = {this.searchChange.bind(this)} value = {this.state.cityValue}/>
+                 <h5 style = {{float: 'right'}}>
+                 <Dropdown selection placeholder = 'Sort' options={sortOptions}
+                onChange = {this.sortChange.bind(this)}
+                /></h5></h3>
                 <Input focus placeholder='Search Place' ref="rcity"
                 onChange={this.changecity.bind(this)}/>
                 <Input focus placeholder='Search Cusines...' ref="cusine"

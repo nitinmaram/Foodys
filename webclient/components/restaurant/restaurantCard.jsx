@@ -96,7 +96,8 @@ updateComments() {
   <Image src={this.props.image} alt="Image not available" className="cardimage"/>
   <Card.Content>
     <Card.Header className="head">{this.props.name}</Card.Header>
-    <Card.Meta className="cus">{this.props.cuisines}</Card.Meta>
+    <Card.Meta >{this.props.cuisines}</Card.Meta>
+    <Card.Meta style = {{color: 'green'}}>Avg. Cost <span style = {{color: 'red', fontWeight: 'bold'}}>Rs {this.props.cost}</span> (2 ppl)</Card.Meta>
     <Card.Description className="desc">{this.props.location}</Card.Description>
     {comm}
     <br/>
@@ -110,7 +111,7 @@ updateComments() {
   <Card.Content extra>
     <a>
       <Icon name='user' className="rate"/>
-      {this.props.ratings}/5 ratings
+      {this.props.ratings}/5 ratings ({this.props.votes})
     </a>
     <div className="commentText">
     {but}
