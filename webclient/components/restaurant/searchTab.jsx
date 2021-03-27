@@ -104,7 +104,7 @@ class searchTab extends React.Component {
         return (
             <Container textAlign="center">
                 <h3>You Are in &nbsp;&nbsp;&nbsp;
-                <Dropdown placeholder='Select Country' search scrolling
+                <Dropdown placeholder='Any City ?' search scrolling
                  selection options={this.state.dropOptions}
                  text = {this.state.cityValue} onChange = {this.dropChange.bind(this)}
                  onSearchChange = {this.searchChange.bind(this)} value = {this.state.cityValue}/>

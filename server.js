@@ -65,7 +65,7 @@ var server = https.createServer(options, app);
 //Listening to port 8081
 server.listen(8080);
 server.on('error', ()=> 'Listening');
-server.on('listening', () => 'Listening on 8080');
+server.on('listening', () => console.log('Listening on 8080'));
 // app.listen(8080, '0.0.0.0', function(err, result) {
 //     if (err) {
 //         console.error("Error ", err);

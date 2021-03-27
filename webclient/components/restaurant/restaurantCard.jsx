@@ -9,7 +9,22 @@ class RestaurantCard extends React.Component {
     constructor() {
         super();
         this.sendData = this.sendData.bind(this);
-        this.state={addButton:'Add',updateButton:'Update'}
+        this.successFav = this.successFav.bind(this);
+        this.state={addButton:'Add',updateButton:'Update',objArray : []}
+      }
+      componentDidMount(){
+        this.getFavourites(this.successFav);
+      }
+      successFav(data){
+        console.log('successFav', data.includes(this.props.id+''));
+        
+        if(data.includes(this.props.id+'')){
+          console.log('here');
+          this.setState({
+            'addButton': 'Already added to your Fav'
+          })
+          
+        }
       }
   sendData(){
     if(document.cookie==''){
@@ -31,6 +46,7 @@ class RestaurantCard extends React.Component {
      user: document.cookie
    }
      var successFunction = function(data) {
+      if(this.state.addButton != 'Already added to your Fav')
       this.setState({'addButton':'Added to your Fav'})
          console.log(data);
        }.bind(this)
@@ -69,9 +85,32 @@ updateComments() {
      }
    dbcalls.updateComments(stateData, successFunction, errorFunction)
  }
+ getFavourites(success) {
+   
+  if(document.cookie != '')
+  {
+    var stateData =  {user: document.cookie}
+    var successFunction = function(data)
+    {
+      
+      this.setState({
+        objArray: data.map(res => {
+          return res['_id'];
+        })
+      });
+      success(this.state.objArray);
+      
+    }
+    var errorFunction = function(err)
+    {
+      console.log('error occurred on AJAX of get fav');
+      console.log(err);
+    }
+    dbcalls.getFavourite(stateData, successFunction.bind(this), errorFunction.bind(this))
+  }
+}
       render()
       {
-
         var but = "";
         var comm="";
         if(this.props.fav === "fav") {

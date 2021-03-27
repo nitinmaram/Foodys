@@ -42,7 +42,7 @@ router.get('/', function(req, res) {
  });
 
 router.post('/login', function(req, res) {
-    User.findOne({"username" : req.body.username}, function(err, docs){
+    User.findOne({"username" : req.body.username, "password": req.body.password}, function(err, docs){
       if(docs==null || err){
       res.send({responseText:'not authenticated'});
       	}

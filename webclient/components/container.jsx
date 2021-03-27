@@ -19,14 +19,14 @@ class MainComponent extends React.Component {
       componentDidMount(){
         this.getCurrentCoordinates();
       }
-      success(p){
+      successGetCurrentCoordinates(p){
       this.getResturantByLoc(p.coords.latitude,p.coords.longitude);
       }
       options(){
                enableHighAccuracy: true
       }
       getCurrentCoordinates() {
-        navigator.geolocation.getCurrentPosition(this.success.bind(this),this.options.bind(this));
+        navigator.geolocation.getCurrentPosition(this.successGetCurrentCoordinates.bind(this),this.options.bind(this));
       }
 
       getResturantFromQuery(rcity,cusine,cityId)

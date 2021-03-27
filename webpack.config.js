@@ -35,9 +35,12 @@ const config = {
 			  loader: 'style-loader!css-loader'
 			},
 			{
-			 test: /\.(jpe?g|gif|png)$/,
-			 loader: 'file-loader?emitFile=false&name=../assets/images/[name].[ext]'
-			}
+                test: /\.(png|jpg|gif)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {}
+                }]
+            }
 		]
 	}
 }

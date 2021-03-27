@@ -97,6 +97,8 @@ LoginUser(){
     'password':this.state.password
   }
   var successFunction = function(res) {
+    console.log(res, 'ressss');
+    
     if(res.responseText == "authenticated"){
     hashHistory.push('/home');
     document.cookie = 'username = '+context.state.username
